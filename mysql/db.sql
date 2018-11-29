@@ -1,4 +1,4 @@
-CREATE TABLE jsonwebtokens 
+CREATE TABLE credentials 
 (
 	jwt_id  int 	       NOT NULL AUTO_INCREMENT ,
 	-- credentials issuer did
@@ -23,5 +23,7 @@ CREATE TABLE jsonwebtokens
 	crud    char(60) ,
 	-- other required jwt field for usecase
 	context text ,
+	-- base64-url encoded jwt
+	credential text,
 	PRIMARY KEY (jwt_id)
 ) ENGINE=InnoDB;

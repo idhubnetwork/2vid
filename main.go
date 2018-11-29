@@ -1,7 +1,7 @@
 package main
 
 import (
-	"2vid/mysql"
+	"2vid/db_mysql"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	defer mysql.DB_mysql.Close()
+	defer db_mysql.DB_mysql.Close()
 
 	router := gin.New()
 
