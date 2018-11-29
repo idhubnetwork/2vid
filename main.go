@@ -1,10 +1,16 @@
 package main
 
 import (
+	"2vid/mysql"
+
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
+
+	defer mysql.DB_mysql.Close()
+
 	router := gin.New()
 
 	// Global middleware
