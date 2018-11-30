@@ -1,7 +1,7 @@
 package main
 
 import (
-	"2vid/db_mysql"
+	"2vid/mysql"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
