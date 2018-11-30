@@ -11,6 +11,10 @@ import (
 
 const DESTINATION = "url"
 
+type AuthErr struct {
+	Authentication string `json:"FaliedAuthentication"`
+}
+
 type Token struct {
 	token string `form:"token" json:"token" xml:"token" binding:"required"`
 }
@@ -19,26 +23,26 @@ func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tmp, err := searchToken(c)
 		if err != nil {
-			c.JSON(http.StatusForbidden, err.Error())
+			c.JSON(http.StatusForbidden, AuthErr{err.Error()})
 		}
 		jt := jsontokens.NewJsonToken()
 		jt.SetToken(tmp)
 		if err = jt.Verify(); err != nil {
-			c.JSON(http.StatusForbidden, err.Error())
+			c.JSON(http.StatusForbidden, AuthErr{err.Error()})
 		}
 		expiration, ok := jt.Get("expiration").(int)
 		if !ok {
-			c.JSON(http.StatusForbidden, "jsontoken non expiration")
+			c.JSON(http.StatusForbidden, AuthErr{"jsontoken non expiration"})
 		}
 		if int64(expiration) > time.Now().Unix() {
-			c.JSON(http.StatusForbidden, "jsontoken expired")
+			c.JSON(http.StatusForbidden, AuthErr{"jsontoken expired"})
 		}
 		destination, ok := jt.Get("destination").(string)
 		if !ok {
-			c.JSON(http.StatusForbidden, "jsontoken non destination")
+			c.JSON(http.StatusForbidden, AuthErr{"jsontoken non destination"})
 		}
 		if destination != DESTINATION {
-			c.JSON(http.StatusForbidden, "invalid access url destination")
+			c.JSON(http.StatusForbidden, AuthErr{"invalid access url destination"})
 		}
 		c.Set("DIDJsonToken", jt)
 	}
