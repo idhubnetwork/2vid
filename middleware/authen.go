@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"time"
 	"strings"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,12 @@ func Authentication() gin.HandlerFunc {
 		jt := jsontokens.NewJsonToken()
 		jt.SetToken(tmp)
 		if err = jt.Verify(), err != nil {}
+		expiration, ok := jt.Get("expiration").(int)
+		if !ok {}
+		if int64(expiration) > time.Now().Unix() {}
+		destination, ok := jt.Get("destination").(string)
+		if !ok {}
+		if destination != DESTINATION {}
 		c.Set("DIDJsonToken", jt)
 	}
 }
