@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"net/http"
 	"time"
 	"strings"
 	"errors"
@@ -15,16 +16,28 @@ type Token struct {
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tmp, err := searchToken(c)
-		if err != nil {}
+		if err != nil {
+			c.JSON(http.StatusForbidden, err)
+		}
 		jt := jsontokens.NewJsonToken()
 		jt.SetToken(tmp)
-		if err = jt.Verify(), err != nil {}
+		if err = jt.Verify(), err != nil {
+			c.JSON(http.StatusForbidden, err)
+		}
 		expiration, ok := jt.Get("expiration").(int)
-		if !ok {}
-		if int64(expiration) > time.Now().Unix() {}
+		if !ok {
+			c.JSON(http.StatusForbidden, errors.New("jsontoken non expiration"))
+		}
+		if int64(expiration) > time.Now().Unix() {
+			c.JSON(http.StatusForbidden, errors.New("jsontoken expired"))
+		}
 		destination, ok := jt.Get("destination").(string)
-		if !ok {}
-		if destination != DESTINATION {}
+		if !ok {
+			c.JSON(http.StatusForbidden, errors.New("jsontoken non destination"))
+		}
+		if destination != DESTINATION {
+			c.JSON(http.StatusForbidden, errors.New("invalid access url destination"))
+		}
 		c.Set("DIDJsonToken", jt)
 	}
 }
