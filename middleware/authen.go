@@ -16,7 +16,7 @@ type AuthErr struct {
 }
 
 type Token struct {
-	token string `form:"token" json:"token" xml:"token" binding:"required"`
+	Token string `form:"token" json:"token" xml:"token" binding:"required"`
 }
 
 func Authentication() gin.HandlerFunc {
@@ -55,7 +55,7 @@ func searchToken(c *gin.Context) (string, error) {
 		if err := c.ShouldBind(&token); err != nil {
 			return "", errors.New("non DID Json Token")
 		}
-		tmp = token.token
+		tmp = token.Token
 		if len(tmp) < 14 || tmp[0:13] != "DIDJsonToken " {
 			return "", errors.New("invalid DID Json Token")
 		}
