@@ -24,6 +24,8 @@ CREATE TABLE credentials
 	-- other required jwt field for usecase
 	context text ,
 	-- base64-url encoded jwt
-	credential text,
+	credential text ,
+	-- jwt permission status
+	status int ,
 	PRIMARY KEY (jwt_id)
 ) ENGINE=InnoDB;
