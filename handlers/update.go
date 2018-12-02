@@ -12,8 +12,8 @@ const (
 	// 0000 0010
 	UPDATE_ISSUER_OP = 0x02
 
-	// 0001 0000
-	UPDATE_AUDIENCE_OP = 0x10
+	// 0001 1000
+	UPDATE_AUDIENCE_OP = 0x18
 
 	UPDATE_ERROR = "Only credential issuer can update!"
 )
