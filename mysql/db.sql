@@ -16,16 +16,16 @@ CREATE TABLE credentials
 	-- jwt identifier to avoid Replay attack for specific usecase
 	jti  	varchar(255) ,
 	-- blockchain identifier, defalut is eth_ropsten
-	net     varchar(100) ,
+	net     varchar(100)   NOT NULL ,
 	-- jwt compliance manual link (optional, default stored on IPFS)
 	ipfs    varchar(100) ,
 	-- predefined CRUD operation permission for specific usecase
-	crud    char(60) ,
+	-- crud    char(60)       NOT NULL ,
 	-- other required jwt field for usecase
 	context text ,
 	-- base64-url encoded jwt
 	credential text ,
 	-- jwt permission status
-	status int ,
+	status  int            NOT NULL ,
 	PRIMARY KEY (jwt_id)
 ) ENGINE=InnoDB;
