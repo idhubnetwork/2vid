@@ -27,7 +27,7 @@ func CreateCredential(credential *Credential) error {
 	if err != nil {
 		return err
 	}
-	_, err := result.LastInsertId()
+	_, err = result.LastInsertId()
 	if err != nil {
 		return err
 	}

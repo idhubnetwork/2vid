@@ -23,7 +23,7 @@ func UpdateCredential_TBD(jwt_id int, credential *Credential) error {
 	if err != nil {
 		return err
 	}
-	_, err := result.LastInsertId()
+	_, err = result.LastInsertId()
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func UpdateCredential(jwt_id int) error {
 	if err != nil {
 		return err
 	}
-	_, err := result.RowsAffected()
+	_, err = result.RowsAffected()
 	if err != nil {
 		return err
 	}

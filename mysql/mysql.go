@@ -17,14 +17,14 @@ type Credential struct {
 	Iss        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
 	Aud        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
 	Sub        string `json:"-" validate:"required"`
-	Exp        string `json:"-" validate:"required"`
-	Nbf        string `json:"-"`
-	Iat        string `json:"-"`
+	Exp        int    `json:"-" validate:"required"`
+	Nbf        int    `json:"-"`
+	Iat        int    `json:"-"`
 	Jti        string `json:"-"`
 	Net        string `json:"-" validate:"required,contains=eth"`
 	IPFS       string `json:"-"`
 	Context    string `json:"-"`
-	Status     string `json:"-" validate:"required,lte=15,gte=0"`
+	Status     int    `json:"-" validate:"required,lte=15,gte=0"`
 	Credential string `json:"credential" validate:"required"`
 }
 
@@ -55,7 +55,7 @@ func GetStatus(args ...string) (jwt_id int, status int, err error) {
 func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	var credential *Credential
 	tmp := jsontokens.NewJWT()
-	err = tmp.SetJWT(jwt)
+	err := tmp.SetJWT(jwt)
 	if err != nil {
 		return nil, errors.New("invalid jwt to init")
 	}
@@ -69,6 +69,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 		return nil, errors.New("only jwt issuer have opration permission")
 	}
 
+	var ok bool
 	credential.Iss, ok = tmp.Get("iss").(string)
 	if !ok {
 		return nil, errors.New("credential must have valid issuer")
@@ -81,7 +82,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	if !ok {
 		return nil, errors.New("credential must have valid subject")
 	}
-	credential.Exp, ok = tmp.Get("exp").(string)
+	credential.Exp, ok = tmp.Get("exp").(int)
 	if !ok {
 		return nil, errors.New("credential must have valid expiration")
 	}
@@ -89,13 +90,13 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	if !ok {
 		return nil, errors.New("credential must have valid blockchain net id")
 	}
-	credential.Status, ok = tmp.Get("status").(string)
+	credential.Status, ok = tmp.Get("status").(int)
 	if !ok {
 		return nil, errors.New("credential must have valid permission status")
 	}
 
-	credential.Nbf, ok = tmp.Get("nbf").(string)
-	credential.Iat, ok = tmp.Get("iat").(string)
+	credential.Nbf, ok = tmp.Get("nbf").(int)
+	credential.Iat, ok = tmp.Get("iat").(int)
 	credential.Jti, ok = tmp.Get("jti").(string)
 	credential.IPFS, ok = tmp.Get("ipfs").(string)
 	credential.Context, ok = tmp.Get("context").(string)
@@ -104,7 +105,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	var validate *validator.Validate
 	validationErr := validate.Struct(credential)
 	if validationErr != nil {
-		return nil, validationErr.Error()
+		return nil, validationErr
 	}
 	return credential, nil
 }
