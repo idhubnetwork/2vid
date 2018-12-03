@@ -13,6 +13,13 @@ import (
 
 var DB_mysql *sql.DB
 
+// Struct Credential is an jwt object for storage and validation.
+//
+// Iss, Aud only idhub-did and length-32 string
+// Sub, Jti is Unique Identification for the two same entities
+// Exp is credential expiration for validate effectiveness
+// Net is blockchain network id, only supported ethereum
+// Credential is jwt form credential
 type Credential struct {
 	Iss        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
 	Aud        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
@@ -28,6 +35,7 @@ type Credential struct {
 	Credential string `json:"credential" validate:"required"`
 }
 
+// mysql init, close in package main
 func init() {
 	DB_mysql, err := sql.Open("mysql",
 		"user:password@tcp(127.0.0.1:3306)/hello")
@@ -37,6 +45,8 @@ func init() {
 	_ = DB_mysql
 }
 
+// select credential.status and credential.jwt_id from mysql
+// params args is []string{iss, aud, sub, jwt}, jti is optional
 func GetStatus(args ...string) (jwt_id int, status int, err error) {
 	var row *sql.Row
 	if len(args) == 3 {
@@ -52,6 +62,9 @@ func GetStatus(args ...string) (jwt_id int, status int, err error) {
 	return
 }
 
+// VerifyWritedData is a validator for credential when update and create
+//  in mysql.
+// Only issuer can create and update credential in mysql.
 func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	var credential *Credential
 	tmp := jsontokens.NewJWT()

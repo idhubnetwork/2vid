@@ -5,6 +5,8 @@ const (
 	DEFAULT_STATUS = 0x30
 )
 
+// Credential CREATE in mysql.
+// Insert credential to mysql, param is a pointer reference Credential Struct.
 func CreateCredential(credential *Credential) error {
 	status := DEFAULT_STATUS | credential.Status
 

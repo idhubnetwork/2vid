@@ -3,10 +3,9 @@ package db_mysql
 import (
 	"fmt"
 	"log"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
+// Credential READ in mysql.
 // args is []string{iss, sub, aud, jti}
 func GetCredential(args ...string) (credential Credential, err error) {
 	row := DB_mysql.QueryRow("select credential from credentials where iss = ?, sub = ?, aud = ?, jti = ?", args)
@@ -18,6 +17,7 @@ func GetCredential(args ...string) (credential Credential, err error) {
 	return
 }
 
+// Credentials array READ in mysql.
 // args is []string{iss, sub, aud}
 func GetCredentials(args ...string) (credentials []Credential, err error) {
 	rows, err := DB_mysql.Query("select credential from credentials where iss = ?, sub = ?, aud = ?", args)
