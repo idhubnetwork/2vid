@@ -9,7 +9,8 @@ func CreateCredential(credential *Credential) error {
 	status := DEFAULT_STATUS | credential.Status
 
 	result, err := DB_mysql.Exec(`insert into credentials(iss,
-	sub,aud,exp,nbf,iat,jti,net,ipfs,context,credential,status)`,
+	sub,aud,exp,nbf,iat,jti,net,ipfs,context,credential,status) 
+	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		credential.Iss,
 		credential.Sub,
 		credential.Aud,

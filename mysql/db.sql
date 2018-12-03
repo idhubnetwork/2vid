@@ -32,7 +32,7 @@ CREATE TABLE credentials
 
 CREATE TABLE updated_credentials 
 (
-	jwt_id  int 	       NOT NULL AUTO_INCREMENT ,
+	jwt_tbd_id  int 	       NOT NULL AUTO_INCREMENT ,
 	-- credentials issuer did
 	iss     char(32)       NOT NULL ,
 	-- credentials subject for usecase
@@ -59,5 +59,7 @@ CREATE TABLE updated_credentials
 	credential text ,
 	-- jwt permission status
 	status  int            NOT NULL ,
-	PRIMARY KEY (jwt_id)
+	-- jwt id foreign key
+	jwt_id  int            NOT NULL,
+	PRIMARY KEY (jwt_tbd_id)
 ) ENGINE=InnoDB;
