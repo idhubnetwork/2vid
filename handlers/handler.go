@@ -9,17 +9,21 @@ import (
 )
 
 const (
+	// Read action need audience did authorization.
 	READ_ERROR = "Only credential audience can read!"
 )
 
+// Handler Error Json
 type ActionErr struct {
 	ActionError string `json:"FaliedAction"`
 }
 
+// Handler 200 OK JSON
 type ActionSuccess struct {
 	Action string `json:"Action"`
 }
 
+// Distribute the request to the corresponding handler.
 func handleCredential(c *gin.Context) {
 	tmp, ok := c.Get("jt")
 	if !ok {
@@ -46,6 +50,11 @@ func handleCredential(c *gin.Context) {
 	}
 }
 
+// Return unique credential or credentials array with json form.
+//
+// Params {iss, aud, sub, jti} identify a unique credential.
+// Params {iss, aud, sub} return a credential array OR maybe should identify
+//   a unique credential to be determine.
 func readCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	did, ok := jt.Get("did").(string)
 	if !ok || len(did) != 32 {
@@ -73,11 +82,11 @@ func readCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		if err != nil {
 			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		}
-		c.JSON(http.StatusForbidden, credential)
+		c.JSON(http.StatusOK, credential)
 	}
 	credentials, err := db_mysql.GetCredentials(jwt_iss, jwt_sub, jwt_aud)
 	if err != nil {
 		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 	}
-	c.JSON(http.StatusForbidden, credentials)
+	c.JSON(http.StatusOK, credentials)
 }

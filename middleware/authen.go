@@ -9,16 +9,22 @@ import (
 	"github.com/idhubnetwork/jsontokens"
 )
 
+// Unique identify 2vid server in did json token.
 const DESTINATION = "url"
 
+// Authentication Error
 type AuthErr struct {
 	Authentication string `json:"FaliedAuthentication"`
 }
 
+// Binding Authentication Token
 type Token struct {
 	Token string `form:"token" json:"token" xml:"token" binding:"required"`
 }
 
+// Gin middleware verify did json token.
+//
+// Json token authority DID credetntial CRUD action.
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tmp, err := searchToken(c)
@@ -48,6 +54,7 @@ func Authentication() gin.HandlerFunc {
 	}
 }
 
+// Json token storage at HTTP Authorization or Field token.
 func searchToken(c *gin.Context) (string, error) {
 	tmp := c.Request.Header.Get("Authorization")
 	var token Token

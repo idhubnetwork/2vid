@@ -1,5 +1,6 @@
 package db_mysql
 
+// Credential DELETE in mysql
 func DeleteCredential(jwt_id int) error {
 	result, err := DB_mysql.Exec("delete from credentials where jwt_id = ?",
 		jwt_id)
@@ -14,6 +15,7 @@ func DeleteCredential(jwt_id int) error {
 	return nil
 }
 
+// Set Credential status is TO BE DELETED in mysql
 func DeleteCredential_TBD(jwt_id, status int) error {
 	result, err := DB_mysql.Exec("update credentials set status = ? where jwt_id = ?",
 		status,

@@ -19,7 +19,7 @@ const (
 )
 
 type JWT struct {
-	JsonWebToken string `json:"jwt"`
+	JsonWebToken string `json:"jwt" binding:"required"`
 }
 
 func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {

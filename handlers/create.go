@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"2vid/mysql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,17 +25,8 @@ func CreateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		c.JSON(http.StatusForbidden, ActionErr{"invalid or non jwt to create"})
 	}
 
-	tmp := jsontokens.NewJWT()
-	err = tmp.SetJWT(jwt.JsonWebToken)
+	credentiual, err := db_mysql.VerifyWritedData(did, jwt.JsonWebToken)
 	if err != nil {
-		c.JSON(http.StatusForbidden, ActionErr{"invalid jwt to create"})
-	}
-	err = tmp.Verify()
-	if err != nil {
-		c.JSON(http.StatusForbidden, ActionErr{"invalid jwt signature"})
-	}
-
-	if did != tmp.Get("iss").(string) {
-		c.JSON(http.StatusForbidden, ActionErr{"non jwt issuer can not create"})
+		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 	}
 }
