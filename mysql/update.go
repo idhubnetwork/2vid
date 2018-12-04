@@ -1,9 +1,17 @@
 package db_mysql
 
-func UpdateCredential_TBD(jwt_id int, credential *Credential) error {
-	status := DEFAULT_STATUS | credential.Status
+// Set Credential status is TO BE UPDATED and storage NEW Credential in
+//  mysql and wait for agree from audience.
+func UpdateCredential_TBD(jwt_id, status int, credential *Credential) error {
+	new_status := DEFAULT_STATUS | credential.Status
 
-	result, err := DB_mysql.Exec(`insert into updated_credentials(iss,
+	tx, err := DB_mysql.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	result, err := tx.Exec(`insert into updated_credentials(iss,
 	sub,aud,exp,nbf,iat,jti,net,ipfs,context,credential,status,jwt_id) 
 	values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		credential.Iss,
@@ -17,6 +25,18 @@ func UpdateCredential_TBD(jwt_id int, credential *Credential) error {
 		credential.IPFS,
 		credential.Context,
 		credential.Credential,
+		new_status,
+		jwt_id)
+
+	if err != nil {
+		return err
+	}
+	_, err = result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	result, err = tx.Exec("update credentials set status = ? where jwt_id = ?",
 		status,
 		jwt_id)
 
@@ -27,9 +47,15 @@ func UpdateCredential_TBD(jwt_id int, credential *Credential) error {
 	if err != nil {
 		return err
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
+// Credential UPDATE in mysql
 func UpdateCredential(jwt_id int) error {
 	result, err := DB_mysql.Exec(`update credentials inner join (select 
 	iss,sub,aud,exp,nbf,iat,jti,net,ipfs,context,credential,status from 
