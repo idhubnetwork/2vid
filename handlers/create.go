@@ -13,7 +13,8 @@ const (
 	DEFAULT_STATUS = 0x30
 )
 
-func CreateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
+// Create a new Credential, param binding a JWT
+func createCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	did, ok := jt.Get("did").(string)
 	if !ok || len(did) != 32 {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid or non did"})
@@ -25,8 +26,15 @@ func CreateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		c.JSON(http.StatusForbidden, ActionErr{"invalid or non jwt to create"})
 	}
 
-	credentiual, err := db_mysql.VerifyWritedData(did, jwt.JsonWebToken)
+	credential, err := db_mysql.VerifyWritedData(did, jwt.JsonWebToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 	}
+
+	err = db_mysql.CreateCredential(credential)
+	if err != nil {
+		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
+	}
+
+	c.JSON(http.StatusOK, ActionSuccess{"credential create successed"})
 }

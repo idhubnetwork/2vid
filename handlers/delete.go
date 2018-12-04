@@ -21,12 +21,25 @@ const (
 	// 1101 1110
 	DELETE_AUDIENCE_OP_TBD = 0xde
 
+	// 0010 0101 & 0011 1010 = 0010 0000 0x20
+	IF_CAN_NOT_DELETE = 0x25
+
+	// 0010 0000
+	CAN_NOT_DELETE = 0x20
+
 	DELETE_ISSUER_ERROR = "Credential issuer can delete but no authorization!"
 
-	UPDATE_AUDIENCE_ERROR = "Credential audience can delete but no authorization!"
+	DELETE_AUDIENCE_ERROR = "Credential audience can delete but no authorization!"
 )
 
-func DeleteCredential(c *gin.Context, jt *jsontokens.JsonToken) {
+// Delete credential, 5 cases:
+//
+// both iss and aud can not delete.
+// iss delete need aud agree
+// aud delete need iss agree
+// iss delete directly
+// aud delete directly
+func deleteCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	did, ok := jt.Get("did").(string)
 	if !ok || len(did) != 32 {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid or non did"})
@@ -47,34 +60,39 @@ func DeleteCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	var (
 		jwt_id int
 		status int
+		err    error
 	)
 	jwt_jti, ok := jt.Get("jwt_jti").(string)
 	if !ok {
-		jwt_id, status, err := db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud)
+		jwt_id, status, err = db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud)
 		if err != nil {
 			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		}
 	} else {
-		jwt_id, status, err := db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
+		jwt_id, status, err = db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
 		if err != nil {
 			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		}
 	}
 
+	if IF_CAN_NOT_DELETE&status == CAN_NOT_DELETE {
+		c.JSON(http.StatusForbidden, ActionErr{"This credential can't delete"})
+	}
+
 	if DELETE_ISSUER_OP&status == 0 {
 		if did != jwt_iss {
-			c.JSON(http.StatusForbidden, ActionErr{UPDATE_ISSUER_ERROR})
+			c.JSON(http.StatusForbidden, ActionErr{DELETE_ISSUER_ERROR})
 		}
 		db_mysql.DeleteCredential(jwt_id)
-		c.JSON(http.StatusOK, ActionSuccess{"jwt delete successed"})
+		c.JSON(http.StatusOK, ActionSuccess{"credential delete successed"})
 	}
 
 	if DELETE_AUDIENCE_OP&status == 0 {
 		if did != jwt_aud {
-			c.JSON(http.StatusForbidden, ActionErr{UPDATE_AUDIENCE_ERROR})
+			c.JSON(http.StatusForbidden, ActionErr{DELETE_AUDIENCE_ERROR})
 		}
 		db_mysql.DeleteCredential(jwt_id)
-		c.JSON(http.StatusOK, ActionSuccess{"jwt delete successed"})
+		c.JSON(http.StatusOK, ActionSuccess{"credential delete successed"})
 	}
 
 	if did == jwt_iss {
