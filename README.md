@@ -37,3 +37,23 @@ type Token struct {
 	Token string `form:"token" json:"token" xml:"token" binding:"required"`
 }
 ```
+
+### credential permission status
+Credential `status` field indicates CRUD permission in database.
+
+|     |Reserved|Reserved|DELETED|UPDATED| ISS_UPDATE | ISS_DELETE | AUD_UPDATE |AUD_DELETE |
+|----|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
+|1|||allowed but no yet deleted|allowed but no yet updated|iss could update|iss could delete OR confirm deleted|update need aud agree|aud could delete OR confirm deleted|
+|0|||forbid to delete OR have been deleted and to be confirmed|have been updated and to be confirmed|iss can not update|iss can not delete OR have been deleted|update don't need aud agree|aud can not delete OR have been deleted|  |
+
+Status for DELETE in database:
+* `0011 1010` Both iss and aud can not delete.
+* `0001 1011` Deleted by iss and to be confirmed by aud.
+* `0001 1110` Deleted by aud and to be confirmed by iss.
+* `0011 1011` Can deleted by aud directly.
+* `0011 1110` Can deleted by iss directly.
+
+Status for UPDATE in database:
+* `0011 0101` Both iss and aud can not update.
+* `0011 1101` Can updated by iss directly.
+* `0010 0111` Updated by iss and  to be confirmed by aud.
