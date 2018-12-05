@@ -38,7 +38,8 @@ func main() {
 			v1.POST("/exceptions", recoverCredential)
 		*/
 		v1.GET("/", handler.HandleCredential)
+		v1.POST("/", handler.HandleCredential)
 	}
 
-	router.Run(":8080")
+	router.Run(":8000")
 }

@@ -58,3 +58,6 @@ Status for UPDATE in database:
 * `0011 0101` Both iss and aud can not update.
 * `0011 1101` Can updated by iss directly.
 * `0010 0111` Updated by iss and  to be confirmed by aud.
+
+### response and error
+Reference to [GoDoc](https://godoc.org/github.com/idhubnetwork/2vid/handlers)

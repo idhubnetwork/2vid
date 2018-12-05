@@ -38,7 +38,7 @@ type Credential struct {
 // mysql init, close in package main
 func init() {
 	DB_mysql, err := sql.Open("mysql",
-		"user:password@tcp(127.0.0.1:3306)/hello")
+		"root:@tcp(127.0.0.1:3306)/2vid_test")
 	if err != nil {
 		log.Fatal(err)
 	}
