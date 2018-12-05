@@ -41,15 +41,15 @@ const (
 // aud delete directly
 func deleteCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	did, ok := jt.Get("did").(string)
-	if !ok || len(did) != 32 {
+	if !ok || len(did) != 52 {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid or non did"})
 	}
 	jwt_iss, ok := jt.Get("jwt_iss").(string)
-	if !ok || len(jwt_iss) != 32 {
+	if !ok || len(jwt_iss) != 52 {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid or non jwt_iss"})
 	}
 	jwt_aud, ok := jt.Get("jwt_aud").(string)
-	if !ok || len(jwt_aud) != 32 {
+	if !ok || len(jwt_aud) != 52 {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid or non jwt_aud"})
 	}
 	jwt_sub, ok := jt.Get("jwt_sub").(string)
