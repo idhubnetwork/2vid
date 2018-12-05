@@ -27,12 +27,14 @@ func HandleCredential(c *gin.Context) {
 	tmp, ok := c.Get("jt")
 	if !ok {
 		c.JSON(http.StatusForbidden, ActionErr{"non DID Json Token"})
+		return
 	}
 	jt := tmp.(*jsontokens.JsonToken)
 
 	action, ok := jt.Get("action").(string)
 	if !ok {
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken non action"})
+		return
 	}
 
 	switch action {
@@ -46,5 +48,6 @@ func HandleCredential(c *gin.Context) {
 		deleteCredential(c, jt)
 	default:
 		c.JSON(http.StatusForbidden, ActionErr{"jsontoken invalid action"})
+		return
 	}
 }
