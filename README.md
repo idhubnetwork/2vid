@@ -42,7 +42,7 @@ type Token struct {
 Credential `status` field indicates CRUD permission in database.
 
 |     |Reserved|Reserved|DELETED|UPDATED|ISS_UPDATE|ISS_DELETE|AUD_UPDATE|AUD_DELETE|
-|---|---|---|---|---|---|---|---|
+|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
 |1|||allowed but no yet deleted|allowed but no yet updated|iss could update|iss could delete OR confirm deleted|update need aud agree|aud could delete OR confirm deleted|
 |0|||forbid to delete OR have been deleted and to be confirmed|have been updated and to be confirmed|iss can not update|iss can not delete OR have been deleted|update don't need aud agree|aud can not delete OR have been deleted||
 
