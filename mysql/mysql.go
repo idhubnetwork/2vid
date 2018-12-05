@@ -21,8 +21,8 @@ var DB_mysql *sql.DB
 // Net is blockchain network id, only supported ethereum
 // Credential is jwt form credential
 type Credential struct {
-	Iss        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
-	Aud        string `json:"-" validate:"required,len=32,contains=did:idhub:0x"`
+	Iss        string `json:"-" validate:"required,len=52,contains=did:idhub:0x"`
+	Aud        string `json:"-" validate:"required,len=52,contains=did:idhub:0x"`
 	Sub        string `json:"-" validate:"required"`
 	Exp        int    `json:"-" validate:"required"`
 	Nbf        int    `json:"-"`

@@ -2,11 +2,11 @@ CREATE TABLE credentials
 (
 	jwt_id  int 	       NOT NULL AUTO_INCREMENT ,
 	-- credentials issuer did
-	iss     char(32)       NOT NULL ,
+	iss     char(52)       NOT NULL ,
 	-- credentials subject for usecase
 	sub     char(100)      NOT NULL ,
 	-- credentials recipient did
-	aud     char(32)       NOT NULL , 
+	aud     char(52)       NOT NULL , 
 	-- credentials expiration NumericDate(timestamp)
 	exp     int UNSIGNED   NOT NULL ,
 	-- credentials Not Before NumericDate(timestamp)
@@ -34,11 +34,11 @@ CREATE TABLE updated_credentials
 (
 	jwt_tbd_id  int 	       NOT NULL AUTO_INCREMENT ,
 	-- credentials issuer did
-	iss     char(32)       NOT NULL ,
+	iss     char(52)       NOT NULL ,
 	-- credentials subject for usecase
 	sub     char(100)      NOT NULL ,
 	-- credentials recipient did
-	aud     char(32)       NOT NULL , 
+	aud     char(52)       NOT NULL , 
 	-- credentials expiration NumericDate(timestamp)
 	exp     int UNSIGNED   NOT NULL ,
 	-- credentials Not Before NumericDate(timestamp)
