@@ -61,3 +61,29 @@ Status for UPDATE in database:
 
 ### response and error
 Reference to [GoDoc](https://godoc.org/github.com/idhubnetwork/2vid/handlers)
+
+## Logger
+
+JSON
+
+### log monitoring
+
+Elasticsearch
+
+### log level
+
+DEBUG[only test or develop], INFO, WARN, ERROR, FATAL
+
+### log out file
+
+* 2vid.out [INFO]
+* 2vid_verify_failed.out [WARN]
+* 2vid_database_error.out [ERROR]
+* 2vid_panic.out [FATAL]
+
+### log message
+
+* http request and response [INFO] : statusCode|latency|clientIP|method|path|comment
+* authentication middleware error [WARN] : statusCode|latency|clientIP|method|path|error|jsontoken
+* database error [ERROR] : statusCode|latency|clientIP|method|path|comment|action|jsontoken|credential
+* panic recover [FATAL] : statusCode|latency|clientIP|method|path|comment
