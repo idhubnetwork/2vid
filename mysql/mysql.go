@@ -75,6 +75,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 
 	err = tmp.Verify()
 	if err != nil {
+		fmt.Println(err)
 		return nil, errors.New("invalid jwt signature")
 	}
 

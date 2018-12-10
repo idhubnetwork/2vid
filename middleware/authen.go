@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -19,7 +20,8 @@ type AuthErr struct {
 
 // Binding Authentication Token
 type Token struct {
-	Token string `form:"token" json:"token" xml:"token" binding:"required"`
+	JsonToken    string `form:"token" json:"token" xml:"token" binding:"required"`
+	JsonWebToken string `json:"jwt" binding:"required"`
 }
 
 // Gin middleware verify did json token.
@@ -27,6 +29,12 @@ type Token struct {
 // Json token authority DID credetntial CRUD action.
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		var token Token
+		err := c.Bind(&token)
+		c.Set("credential", token.JsonWebToken)
+		c.Set("jsontoken", token.JsonToken)
+
 		tmp, err := searchToken(c)
 
 		if err != nil {
@@ -42,13 +50,13 @@ func Authentication() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		expiration, ok := jt.Get("expiration").(int)
+		expiration, ok := jt.Get("expiration").(float64)
 		if !ok {
 			c.JSON(http.StatusForbidden, AuthErr{"jsontoken non expiration"})
 			c.Abort()
 			return
 		}
-		if int64(expiration) > time.Now().Unix() {
+		if int64(expiration) < time.Now().Unix() {
 			c.JSON(http.StatusForbidden, AuthErr{"jsontoken expired"})
 			c.Abort()
 			return
@@ -65,18 +73,20 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		c.Set("DIDJsonToken", jt)
+		fmt.Println("Authentication Success")
 	}
 }
 
 // Json token storage at HTTP Authorization or Field token.
 func searchToken(c *gin.Context) (string, error) {
 	tmp := c.Request.Header.Get("Authorization")
-	var token Token
 	if len(tmp) < 14 || tmp[0:13] != "DIDJsonToken " {
-		if err := c.Bind(&token); err != nil {
+		token, ok := c.Get("jsontoken")
+		if !ok {
 			return "", errors.New("non DID Json Token")
 		}
-		tmp = token.Token
+
+		tmp = token.(string)
 		if len(tmp) < 14 || string(tmp[0:13]) != "DIDJsonToken " {
 			return "", errors.New("invalid DID Json Token")
 		}
