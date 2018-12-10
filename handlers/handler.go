@@ -24,7 +24,7 @@ type ActionSuccess struct {
 
 // Distribute the request to the corresponding handler.
 func HandleCredential(c *gin.Context) {
-	tmp, ok := c.Get("jt")
+	tmp, ok := c.Get("DIDJsonToken")
 	if !ok {
 		c.JSON(http.StatusForbidden, ActionErr{"non DID Json Token"})
 		return

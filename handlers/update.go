@@ -81,12 +81,12 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		if did != jwt_iss {
 			c.JSON(http.StatusForbidden, ActionErr{UPDATE_ERROR})
 		}
-		var jwt JWT
-		err := c.ShouldBind(&jwt)
-		if err != nil {
+		tmp, ok := c.Get("credential")
+		jwt, ok := tmp.(string)
+		if !ok {
 			c.JSON(http.StatusForbidden, ActionErr{"invalid or non updated jwt"})
 		}
-		credential, err := db_mysql.VerifyWritedData(did, jwt.JsonWebToken)
+		credential, err := db_mysql.VerifyWritedData(did, jwt)
 		if err != nil {
 			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		}
