@@ -37,12 +37,12 @@ type Credential struct {
 
 // mysql init, close in package main
 func init() {
-	DB_mysql, err := sql.Open("mysql",
+	var err error
+	DB_mysql, err = sql.Open("mysql",
 		"root:@tcp(127.0.0.1:3306)/2vid_test")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_ = DB_mysql
 }
 
 // select credential.status and credential.jwt_id from mysql
@@ -66,7 +66,7 @@ func GetStatus(args ...string) (jwt_id int, status int, err error) {
 //  in mysql.
 // Only issuer can create and update credential in mysql.
 func VerifyWritedData(did string, jwt string) (*Credential, error) {
-	var credential *Credential
+	var credential = new(Credential)
 	tmp := jsontokens.NewJWT()
 	err := tmp.SetJWT(jwt)
 	if err != nil {
@@ -78,6 +78,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 		fmt.Println(err)
 		return nil, errors.New("invalid jwt signature")
 	}
+	fmt.Println(tmp)
 
 	if did != tmp.Get("iss").(string) {
 		return nil, errors.New("only jwt issuer have opration permission")
@@ -96,18 +97,20 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	if !ok {
 		return nil, errors.New("credential must have valid subject")
 	}
-	credential.Exp, ok = tmp.Get("exp").(int)
+	expiration, ok := tmp.Get("exp").(float64)
 	if !ok {
 		return nil, errors.New("credential must have valid expiration")
 	}
+	credential.Exp = int(expiration)
 	credential.Net, ok = tmp.Get("net").(string)
 	if !ok {
 		return nil, errors.New("credential must have valid blockchain net id")
 	}
-	credential.Status, ok = tmp.Get("status").(int)
+	status, ok := tmp.Get("status").(float64)
 	if !ok {
 		return nil, errors.New("credential must have valid permission status")
 	}
+	credential.Status = int(status)
 
 	credential.Nbf, ok = tmp.Get("nbf").(int)
 	credential.Iat, ok = tmp.Get("iat").(int)
@@ -116,10 +119,30 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	credential.Context, ok = tmp.Get("context").(string)
 	credential.Credential = jwt
 
-	var validate *validator.Validate
-	validationErr := validate.Struct(credential)
-	if validationErr != nil {
-		return nil, validationErr
+	validate := validator.New()
+	err = validate.Struct(credential)
+	if err != nil {
+		if _, ok := err.(*validator.InvalidValidationError); ok {
+			fmt.Println(err)
+			return nil, errors.New("validate failed")
+		}
+
+		for _, err := range err.(validator.ValidationErrors) {
+
+			fmt.Println(err.Namespace())
+			fmt.Println(err.Field())
+			fmt.Println(err.StructNamespace()) // can differ when a custom TagNameFunc is registered or
+			fmt.Println(err.StructField())     // by passing alt name to ReportError like below
+			fmt.Println(err.Tag())
+			fmt.Println(err.ActualTag())
+			fmt.Println(err.Kind())
+			fmt.Println(err.Type())
+			fmt.Println(err.Value())
+			fmt.Println(err.Param())
+			fmt.Println()
+		}
+		return nil, errors.New("validate failed")
 	}
+	fmt.Println("validate success\n")
 	return credential, nil
 }
