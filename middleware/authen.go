@@ -20,8 +20,8 @@ type AuthErr struct {
 
 // Binding Authentication Token
 type Token struct {
-	JsonToken    string `form:"token" json:"token" xml:"token" binding:"required"`
-	JsonWebToken string `json:"jwt" binding:"required"`
+	JsonToken    string `form:"token" json:"token" xml:"token"`
+	JsonWebToken string `form:"jwt" json:"jwt" xml:"jwt"`
 }
 
 // Gin middleware verify did json token.
