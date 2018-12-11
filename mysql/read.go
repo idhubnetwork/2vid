@@ -8,7 +8,8 @@ import (
 // Credential READ in mysql.
 // args is []string{iss, sub, aud, jti}
 func GetCredential(args ...string) (credential Credential, err error) {
-	row := DB_mysql.QueryRow("select credential from credentials where iss = ?, sub = ?, aud = ?, jti = ?", args)
+	row := DB_mysql.QueryRow("select credential from credentials where iss=? and sub=? and aud=? and jti=?",
+		args[0], args[1], args[2], args[3])
 	err = row.Scan(&credential.Credential)
 	if err != nil {
 		log.Fatal(err)
@@ -20,7 +21,8 @@ func GetCredential(args ...string) (credential Credential, err error) {
 // Credentials array READ in mysql.
 // args is []string{iss, sub, aud}
 func GetCredentials(args ...string) (credentials []Credential, err error) {
-	rows, err := DB_mysql.Query("select credential from credentials where iss = ?, sub = ?, aud = ?", args)
+	rows, err := DB_mysql.Query("select credential from credentials where iss=? and sub=? and aud=?",
+		args[0], args[1], args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
