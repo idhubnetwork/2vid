@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"2vid/logger"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -73,7 +73,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		c.Set("DIDJsonToken", jt)
-		fmt.Println("Authentication Success")
+		logger.Log.Debug("Authentication Success")
 	}
 }
 

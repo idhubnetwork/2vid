@@ -13,7 +13,7 @@ import (
 var Log = logrus.New()
 
 // log file path and name
-var logName = "2vid_log"
+var logName = "2vid"
 
 var logLevels = map[string]logrus.Level{
 	"DEBUG": logrus.DebugLevel,
@@ -24,14 +24,14 @@ var logLevels = map[string]logrus.Level{
 }
 
 func init() {
-	lfsHook := newLfsHook("DEBUG", 0)
+	lfsHook := newLfsHook("DEBUG", 100000)
 	Log.AddHook(lfsHook)
 }
 
 // newLfsHook set Log level and return a rotatelogs Hook
 func newLfsHook(logLevel string, maxRemainCnt uint) logrus.Hook {
-	writer, err := rotatelogs.New(
-		logName+".%Y-%m-%d-%H-%M.log",
+	writer_info, err := rotatelogs.New(
+		logName+"_INFO.%Y-%m-%d-%H.log",
 		// WithLinkName为最新的日志建立软连接，以方便随着找到当前日志文件
 		rotatelogs.WithLinkName(logName),
 
@@ -41,7 +41,39 @@ func newLfsHook(logLevel string, maxRemainCnt uint) logrus.Hook {
 		// WithMaxAge和WithRotationCount二者只能设置一个，
 		// WithMaxAge设置文件清理前的最长保存时间，
 		// WithRotationCount设置文件清理前最多保存的个数
-		rotatelogs.WithMaxAge(time.Hour*24*7),
+		// rotatelogs.WithMaxAge(time.Hour*24*7),
+		rotatelogs.WithRotationCount(maxRemainCnt),
+	)
+
+	writer_debug, err := rotatelogs.New(
+		logName+"_DEBUG.%Y-%m-%d-%H.log",
+		rotatelogs.WithLinkName(logName),
+		rotatelogs.WithRotationTime(24*time.Hour),
+		rotatelogs.WithMaxAge(time.Hour*24*30),
+		// rotatelogs.WithRotationCount(maxRemainCnt),
+	)
+
+	writer_warn, err := rotatelogs.New(
+		logName+"_WARN.%Y-%m-%d-%H.log",
+		rotatelogs.WithLinkName(logName),
+		rotatelogs.WithRotationTime(24*time.Hour),
+		rotatelogs.WithMaxAge(time.Hour*24*30),
+		// rotatelogs.WithRotationCount(maxRemainCnt),
+	)
+
+	writer_error, err := rotatelogs.New(
+		logName+"_ERROR.%Y-%m-%d-%H.log",
+		rotatelogs.WithLinkName(logName),
+		rotatelogs.WithRotationTime(time.Hour),
+		rotatelogs.WithMaxAge(time.Hour*24*365),
+		// rotatelogs.WithRotationCount(maxRemainCnt),
+	)
+
+	writer_fatal, err := rotatelogs.New(
+		logName+"_FATAL.%Y-%m-%d-%H.log",
+		rotatelogs.WithLinkName(logName),
+		rotatelogs.WithRotationTime(time.Hour),
+		rotatelogs.WithMaxAge(time.Hour*24*365),
 		// rotatelogs.WithRotationCount(maxRemainCnt),
 	)
 
@@ -58,11 +90,11 @@ func newLfsHook(logLevel string, maxRemainCnt uint) logrus.Hook {
 	}
 
 	lfsHook := lfshook.NewHook(lfshook.WriterMap{
-		logrus.DebugLevel: writer,
-		logrus.InfoLevel:  writer,
-		logrus.WarnLevel:  writer,
-		logrus.ErrorLevel: writer,
-		logrus.FatalLevel: writer,
+		logrus.DebugLevel: writer_debug,
+		logrus.InfoLevel:  writer_info,
+		logrus.WarnLevel:  writer_warn,
+		logrus.ErrorLevel: writer_error,
+		logrus.FatalLevel: writer_fatal,
 	}, &logrus.TextFormatter{})
 
 	return lfsHook

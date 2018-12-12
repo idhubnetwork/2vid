@@ -19,7 +19,7 @@ func main() {
 	// Global middleware
 	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 	// By default gin.DefaultWriter = os.Stdout
-	router.Use(gin.Logger())
+	// router.Use(gin.Logger())
 
 	// Custom Logger middleware
 	router.Use(logger.Logger())
