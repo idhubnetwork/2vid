@@ -2,6 +2,7 @@ package main
 
 import (
 	"2vid/handlers"
+	"2vid/logger"
 	"2vid/middleware"
 	"2vid/mysql"
 
@@ -19,6 +20,9 @@ func main() {
 	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 	// By default gin.DefaultWriter = os.Stdout
 	router.Use(gin.Logger())
+
+	// Custom Logger middleware
+	router.Use(logger.Logger())
 
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	router.Use(gin.Recovery())
