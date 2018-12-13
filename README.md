@@ -87,3 +87,27 @@ DEBUG[only test or develop], INFO, WARN, ERROR, FATAL
 * authentication middleware error [WARN] : statusCode|latency|clientIP|method|path|error|jsontoken
 * database error [ERROR] : statusCode|latency|clientIP|method|path|comment|action|jsontoken|credential
 * panic recover [FATAL] : statusCode|latency|clientIP|method|path|comment
+
+## Redis Design
+
+### Credential CRUD
+
+`authentication` --> `redis hash`/`mysql select` --> `status`/`jwt_id`
+hash key:
+`sha3(jwt_iss + jwt_sub + jwt_aud)`
+hash value:
+```json
+{
+	"status"     : "permission int",
+	"jwt_id"     : "mysql id",
+	"credential" : "json web token"
+}
+```
+
+`authentication` --> `redis pub/sub` --> `redis hash delete` --> `response` --> `mysql operation` --> `redis hash add`
+5 channles:
+* update_tbd [jwt_id, status, credential]
+* update     [jwt_id]
+* delete_tbd [jwt_id, status]
+* delete     [jwt_id]
+* create     [credential]
