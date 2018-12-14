@@ -93,9 +93,10 @@ DEBUG[only test or develop], INFO, WARN, ERROR, FATAL
 ### Credential CRUD
 
 `authentication` --> `redis hash`/`mysql select` --> `status`/`jwt_id`
-hash key:
+
+* hash key:
 `sha3(jwt_iss + jwt_sub + jwt_aud)`
-hash value:
+* hash value:
 ```json
 {
 	"status"     : "permission int",
@@ -111,3 +112,11 @@ hash value:
 * delete_tbd [jwt_id, status]
 * delete     [jwt_id]
 * create     [credential]
+
+`mysql operation` --> `mysql notification` --> `redis list` --> `redis expiration` --> `mysql notify`
+notify steps:
+1. `if redis[did:list] exist`:
+	* yes : return notification list
+	* no  : next
+2. `return mysql[did:notifications]`
+3. redis delete expired notification automatically
