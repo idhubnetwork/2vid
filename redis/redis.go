@@ -8,9 +8,9 @@ import (
 )
 
 type CacheCredential struct {
-	Status     int64  `redis:"status"`
-	Jwt_id     int64  `redis:"jwt_id"`
-	Credential string `redis:"credential"`
+	Status     int    `redis:"status" json:"status"`
+	Jwt_id     int    `redis:"jwt_id" json:"jwt_id"`
+	Credential string `redis:"credential" json:"credential"`
 }
 
 var DB_redis redis.Conn

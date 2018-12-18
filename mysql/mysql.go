@@ -146,3 +146,49 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	fmt.Println("validate success\n")
 	return credential, nil
 }
+
+// Convert a  correct jwt string to a Credential struct.
+func JwtToCredential(jwt string) (*Credential, error) {
+	var credential = new(Credential)
+	tmp := jsontokens.NewJWT()
+	err := tmp.SetJWT(jwt)
+	if err != nil {
+		return nil, errors.New("invalid jwt to init")
+	}
+
+	var ok bool
+	credential.Iss, ok = tmp.Get("iss").(string)
+	if !ok {
+		return nil, errors.New("credential must have valid issuer")
+	}
+	credential.Aud, ok = tmp.Get("aud").(string)
+	if !ok {
+		return nil, errors.New("credential must have valid audience")
+	}
+	credential.Sub, ok = tmp.Get("sub").(string)
+	if !ok {
+		return nil, errors.New("credential must have valid subject")
+	}
+	expiration, ok := tmp.Get("exp").(float64)
+	if !ok {
+		return nil, errors.New("credential must have valid expiration")
+	}
+	credential.Exp = int(expiration)
+	credential.Net, ok = tmp.Get("net").(string)
+	if !ok {
+		return nil, errors.New("credential must have valid blockchain net id")
+	}
+	status, ok := tmp.Get("status").(float64)
+	if !ok {
+		return nil, errors.New("credential must have valid permission status")
+	}
+	credential.Status = int(status)
+
+	credential.Nbf, ok = tmp.Get("nbf").(int)
+	credential.Iat, ok = tmp.Get("iat").(int)
+	credential.Jti, ok = tmp.Get("jti").(string)
+	credential.IPFS, ok = tmp.Get("ipfs").(string)
+	credential.Context, ok = tmp.Get("context").(string)
+	credential.Credential = jwt
+	return credential, nil
+}
