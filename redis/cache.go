@@ -5,7 +5,7 @@ import (
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
-// Get a cache credential from redis by jwt_iss, jwt_aud, jwt_sub, jwt_jti,
+// Get a cache credential from redis by jwt_iss, jwt_aud, jwt_sub or jwt_jti,
 //   if not exist return nil or if redis throw error return error.
 func GetCacheCredential(args ...string) (*CacheCredential, error) {
 	var data string
@@ -28,6 +28,30 @@ func GetCacheCredential(args ...string) (*CacheCredential, error) {
 	return cacheCredential, nil
 }
 
-func SetCacheCredential(credential *string, args ...string) {
+// Set a cache credential to redis by jwt_iss, jwt_aud, jwt_sub or jwt_jti.
+func SetCacheCredential(credential *CacheCredential, args ...string) error {
+	var data string
 
+	for _, v := range args {
+		data = data + v
+	}
+	key := string(crypto.SignHash([]byte(data)))
+
+	_, err := DB_redis.Do("HMSET", redis.Args{}.Add(key).AddFlat(credential)...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete a pair key-value in redis.
+func DelCacheCredential(args ...string) {
+	var data string
+
+	for _, v := range args {
+		data = data + v
+	}
+	key := string(crypto.SignHash([]byte(data)))
+
+	DB_redis.Do("DEL", key)
 }
