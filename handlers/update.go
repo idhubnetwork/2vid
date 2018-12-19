@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"2vid/logger"
 	"2vid/mysql"
 	"2vid/redis"
 	"net/http"
@@ -41,7 +42,7 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	)
 
 	cacheCredential, err := db_redis.GetCacheCredential([]string{jwt_iss, jwt_sub, jwt_aud})
-	if err != nil {
+	if cacheCredential == nil || err != nil {
 		jwt_jti, ok := jt.Get("jwt_jti").(string)
 		if !ok {
 			jwt_id, status, err = db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud)
@@ -78,7 +79,12 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		}
 
 		status = status & UPDATE_ISSUER_OP_TBD
-		db_redis.Publish("update_tbd", jwt_id, status, jwt)
+		err = db_redis.Publish("update_tbd", jwt_id, status, jwt)
+		if err != nil {
+			logger.Log.Error(err)
+			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
+			return
+		}
 
 		c.JSON(http.StatusOK, ActionSuccess{"jwt update successed but to be determined"})
 	}
@@ -86,7 +92,12 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		if did != jwt_aud {
 			c.JSON(http.StatusForbidden, ActionErr{UPDATE_NEED_ERROR})
 		}
-		db_redis.Publish("update", jwt_id, 0, "")
+		err = db_redis.Publish("update", jwt_id, 0, "")
+		if err != nil {
+			logger.Log.Error(err)
+			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
+			return
+		}
 
 		c.JSON(http.StatusOK, ActionSuccess{"credential update successed"})
 	}

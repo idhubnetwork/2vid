@@ -175,6 +175,20 @@ func consume(channel string, data []byte) error {
 		if err != nil {
 			return err
 		}
+		credential, err := db_mysql.GetKeyById(tmp.Jwt_id)
+		if err != nil {
+			return err
+		}
+		cacheCredential := CacheCredential{
+			credential.Status,
+			tmp.Jwt_id,
+			credential.Credential,
+		}
+		err = SetCacheCredential(&cacheCredential, credential.Iss,
+			credential.Sub, credential.Aud)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

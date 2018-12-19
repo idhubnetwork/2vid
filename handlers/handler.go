@@ -8,6 +8,10 @@ import (
 )
 
 const (
+	DELETE_ISSUER_ERROR = "Credential issuer can delete but no authorization!"
+
+	DELETE_AUDIENCE_ERROR = "Credential audience can delete but no authorization!"
+
 	UPDATE_ERROR = "Only credential issuer can update!"
 
 	UPDATE_NEED_ERROR = "Need credential audience agree update!"
@@ -32,6 +36,24 @@ const (
 
 	// 0001 0000
 	CAN_NOT_UPDATE = 0x10
+
+	// 0000 0001
+	DELETE_ISSUER_OP = 0x01
+
+	// 0000 0100
+	DELETE_AUDIENCE_OP = 0x04
+
+	// 1101 1011
+	DELETE_ISSUER_OP_TBD = 0xdb
+
+	// 1101 1110
+	DELETE_AUDIENCE_OP_TBD = 0xde
+
+	// 0010 0101 & 0011 1010 = 0010 0000 0x20
+	IF_CAN_NOT_DELETE = 0x25
+
+	// 0010 0000
+	CAN_NOT_DELETE = 0x20
 )
 
 // Handler Error Json
