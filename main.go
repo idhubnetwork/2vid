@@ -5,6 +5,7 @@ import (
 	"2vid/logger"
 	"2vid/middleware"
 	"2vid/mysql"
+	"2vid/redis"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -13,6 +14,7 @@ import (
 func main() {
 
 	defer db_mysql.DB_mysql.Close()
+	defer db_redis.DB_redis.Close()
 
 	router := gin.New()
 
