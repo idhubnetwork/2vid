@@ -87,7 +87,17 @@ func consume(channel string, data []byte) error {
 		if err != nil {
 			return err
 		}
-		err = db_mysql.CreateCredential(credential)
+		id, err := db_mysql.CreateCredential(credential)
+		if err != nil {
+			return err
+		}
+		cacheCredential := CacheCredential{
+			credential.Status,
+			id,
+			credential.Credential,
+		}
+		err = SetCacheCredential(&cacheCredential, credential.Iss,
+			credential.Sub, credential.Aud)
 		if err != nil {
 			return err
 		}

@@ -7,7 +7,7 @@ import (
 
 // Get a cache credential from redis by jwt_iss, jwt_aud, jwt_sub or jwt_jti,
 //   if not exist return nil or if redis throw error return error.
-func GetCacheCredential(args ...string) (*CacheCredential, error) {
+func GetCacheCredential(args []string) (*CacheCredential, error) {
 	var data string
 	var cacheCredential *CacheCredential
 
@@ -45,7 +45,7 @@ func SetCacheCredential(credential *CacheCredential, args ...string) error {
 }
 
 // Delete a pair key-value in redis.
-func DelCacheCredential(args ...string) {
+func DelCacheCredential(args ...string) error {
 	var data string
 
 	for _, v := range args {
@@ -53,5 +53,10 @@ func DelCacheCredential(args ...string) {
 	}
 	key := string(crypto.SignHash([]byte(data)))
 
-	DB_redis.Do("DEL", key)
+	_, err := DB_redis.Do("DEL", key)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
