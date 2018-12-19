@@ -25,14 +25,14 @@ func createCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		return
 	}
 
-	credential, err := db_mysql.VerifyWritedData(did, jwt)
+	_, err := db_mysql.VerifyWritedData(did, jwt)
 	if err != nil {
 		logger.Log.Warn(err)
 		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		return
 	}
 
-	err := db_redis.Publish("create", 0, 0, jwt)
+	err = db_redis.Publish("create", 0, 0, jwt)
 	if err != nil {
 		logger.Log.Error(err)
 		c.JSON(http.StatusForbidden, ActionErr{err.Error()})

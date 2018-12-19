@@ -110,8 +110,30 @@ func consume(channel string, data []byte) error {
 		if err != nil {
 			return err
 		}
+		credential, err := db_mysql.GetKeyById(tmp)
+		if err != nil {
+			return err
+		}
+		cacheCredential := CacheCredential{
+			credential.Status,
+			tmp,
+			credential.Credential,
+		}
+		err = SetCacheCredential(&cacheCredential, credential.Iss,
+			credential.Sub, credential.Aud)
+		if err != nil {
+			return err
+		}
 	case "delete":
 		tmp, err := strconv.Atoi(string(data))
+		if err != nil {
+			return err
+		}
+		credential, err := db_mysql.GetKeyById(tmp)
+		if err != nil {
+			return err
+		}
+		err = DelCacheCredential(credential.Iss, credential.Sub, credential.Aud)
 		if err != nil {
 			return err
 		}
@@ -130,6 +152,16 @@ func consume(channel string, data []byte) error {
 			return err
 		}
 		err = db_mysql.UpdateCredential_TBD(tmp.Jwt_id, tmp.Status, credential)
+		if err != nil {
+			return err
+		}
+		cacheCredential := CacheCredential{
+			tmp.Status,
+			tmp.Jwt_id,
+			credential.Credential,
+		}
+		err = SetCacheCredential(&cacheCredential, credential.Iss,
+			credential.Sub, credential.Aud)
 		if err != nil {
 			return err
 		}

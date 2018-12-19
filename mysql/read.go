@@ -1,9 +1,5 @@
 package db_mysql
 
-import (
-	"log"
-)
-
 // Credential READ in mysql.
 // args is []string{iss, sub, aud, jti}
 func GetCredential(args ...string) (credential *Credential, err error) {
@@ -11,7 +7,7 @@ func GetCredential(args ...string) (credential *Credential, err error) {
 		args[0], args[1], args[2], args[3])
 	err = row.Scan(credential.Credential)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	return
 }
@@ -22,7 +18,7 @@ func GetCredentials(args ...string) (credentials []*Credential, err error) {
 	rows, err := DB_mysql.Query("select credential from credentials where iss=? and sub=? and aud=?",
 		args[0], args[1], args[2])
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer rows.Close()
 	i := 0

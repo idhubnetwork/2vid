@@ -57,7 +57,7 @@ func readCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		return
 	}
 
-	credential, err := getCrentialFromRedis(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
+	credential, err := getCrentialFromRedis(jwt_iss, jwt_sub, jwt_aud)
 	if err == nil {
 		c.JSON(http.StatusOK, credential)
 		return

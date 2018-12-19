@@ -31,7 +31,7 @@ func Publish(channel string, jwt_id int, status int, credential string) error {
 
 // Redis publish message generator.
 func getMessage(jwt_id int, status int, credential string) (string, error) {
-	if credential != "" || len(credential) != 0 {
+	if credential != "" && len(credential) != 0 {
 		tmp := CacheCredential{
 			status,
 			jwt_id,

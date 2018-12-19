@@ -8,11 +8,30 @@ import (
 )
 
 const (
+	UPDATE_ERROR = "Only credential issuer can update!"
+
+	UPDATE_NEED_ERROR = "Need credential audience agree update!"
+
 	// Read action need audience did authorization.
 	READ_ERROR = "Only credential audience can read!"
 
 	// 0011 0000
 	DEFAULT_STATUS = 0x30
+
+	// 0000 0010
+	UPDATE_ISSUER_OP = 0x02
+
+	// 1110 0111
+	UPDATE_ISSUER_OP_TBD = 0xe7
+
+	// 0001 1000
+	UPDATE_AUDIENCE_OP = 0x18
+
+	// 0001 1010 & 0011 0101 = 0001 0000 0x10
+	IF_CAN_NOT_UPDATE = 0x1a
+
+	// 0001 0000
+	CAN_NOT_UPDATE = 0x10
 )
 
 // Handler Error Json
