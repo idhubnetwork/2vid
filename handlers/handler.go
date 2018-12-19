@@ -10,6 +10,9 @@ import (
 const (
 	// Read action need audience did authorization.
 	READ_ERROR = "Only credential audience can read!"
+
+	// 0011 0000
+	DEFAULT_STATUS = 0x30
 )
 
 // Handler Error Json

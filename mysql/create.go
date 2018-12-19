@@ -7,7 +7,7 @@ const (
 
 // Credential CREATE in mysql.
 // Insert credential to mysql, param is a pointer reference Credential Struct.
-func CreateCredential(credential *Credential) error {
+func CreateCredential(credential *Credential) (int, error) {
 	status := DEFAULT_STATUS | credential.Status
 
 	result, err := DB_mysql.Exec(`insert into credentials(iss,
@@ -27,11 +27,11 @@ func CreateCredential(credential *Credential) error {
 		status)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
-	_, err = result.LastInsertId()
+	id, err := result.LastInsertId()
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return int(id), nil
 }

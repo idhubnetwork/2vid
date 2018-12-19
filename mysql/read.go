@@ -1,26 +1,24 @@
 package db_mysql
 
 import (
-	"fmt"
 	"log"
 )
 
 // Credential READ in mysql.
 // args is []string{iss, sub, aud, jti}
-func GetCredential(args ...string) (credential Credential, err error) {
+func GetCredential(args ...string) (credential *Credential, err error) {
 	row := DB_mysql.QueryRow("select credential from credentials where iss=? and sub=? and aud=? and jti=?",
 		args[0], args[1], args[2], args[3])
-	err = row.Scan(&credential.Credential)
+	err = row.Scan(credential.Credential)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(credential)
 	return
 }
 
 // Credentials array READ in mysql.
 // args is []string{iss, sub, aud}
-func GetCredentials(args ...string) (credentials []Credential, err error) {
+func GetCredentials(args ...string) (credentials []*Credential, err error) {
 	rows, err := DB_mysql.Query("select credential from credentials where iss=? and sub=? and aud=?",
 		args[0], args[1], args[2])
 	if err != nil {
@@ -29,16 +27,16 @@ func GetCredentials(args ...string) (credentials []Credential, err error) {
 	defer rows.Close()
 	i := 0
 	for rows.Next() {
-		err = rows.Scan(&credentials[i].Credential)
+		err = rows.Scan(credentials[i].Credential)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		i++
 	}
 
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	return
 }

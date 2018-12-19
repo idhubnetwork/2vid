@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"2vid/logger"
 	"2vid/mysql"
+	"2vid/redis"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,10 +40,15 @@ func readCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		c.JSON(http.StatusForbidden, ActionErr{READ_ERROR})
 		return
 	}
-	jwt_jti, ok := jt.Get("jwt_jti").(string)
 
+	jwt_jti, ok := jt.Get("jwt_jti").(string)
 	if ok {
-		credential, err := db_mysql.GetCredential(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
+		credential, err := getCrentialFromRedis(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
+		if err == nil {
+			c.JSON(http.StatusOK, credential)
+			return
+		}
+		credential, err = db_mysql.GetCredential(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
 		if err != nil {
 			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 			return
@@ -49,11 +56,33 @@ func readCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 		c.JSON(http.StatusOK, credential)
 		return
 	}
+
+	credential, err := getCrentialFromRedis(jwt_iss, jwt_sub, jwt_aud, jwt_jti)
+	if err == nil {
+		c.JSON(http.StatusOK, credential)
+		return
+	}
+
 	credentials, err := db_mysql.GetCredentials(jwt_iss, jwt_sub, jwt_aud)
 	if err != nil {
 		c.JSON(http.StatusForbidden, ActionErr{err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, credentials)
 	return
+}
+
+func getCrentialFromRedis(args ...string) (*db_mysql.Credential, error) {
+	cacheCredential, err := db_redis.GetCacheCredential(args)
+	if err != nil {
+		logger.Log.Error(err)
+		return nil, err
+	}
+	credential, err := db_mysql.JwtToCredential(cacheCredential.Credential)
+	if err != nil {
+		logger.Log.Error(err)
+		return nil, err
+	}
+	return credential, nil
 }
