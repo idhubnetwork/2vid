@@ -9,7 +9,7 @@ import (
 //   if not exist return nil or if redis throw error return error.
 func GetCacheCredential(args []string) (*CacheCredential, error) {
 	var data string
-	var cacheCredential *CacheCredential
+	cacheCredential := new(CacheCredential)
 
 	for _, v := range args {
 		data = data + v

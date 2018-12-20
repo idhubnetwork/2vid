@@ -4,6 +4,7 @@ import (
 	"2vid/logger"
 	"2vid/mysql"
 	"2vid/redis"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -78,6 +79,10 @@ func getCrentialFromRedis(args ...string) (*db_mysql.Credential, error) {
 	if err != nil {
 		logger.Log.Error(err)
 		return nil, err
+	}
+	logger.Log.Debug(cacheCredential)
+	if len(cacheCredential.Credential) == 0 {
+		return nil, errors.New("no found in redis and go to mysql")
 	}
 	credential, err := db_mysql.JwtToCredential(cacheCredential.Credential)
 	if err != nil {
