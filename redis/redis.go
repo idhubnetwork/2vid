@@ -21,7 +21,7 @@ func init() {
 	url := config.V.Redis.Url
 	password := config.V.Redis.Password
 
-	DB_redis, err = redis.DialURL(url, redis.DialPassword(password))
+	DB_redis, err = redis.Dial("tcp", url, redis.DialPassword(password))
 	if err != nil {
 		// handle connection error
 		panic(err)

@@ -16,6 +16,7 @@ var Log = logrus.New()
 
 // log file path and name
 var logName = config.V.LogName
+var logLevel = config.V.LogLevel
 
 var logLevels = map[string]logrus.Level{
 	"DEBUG": logrus.DebugLevel,
@@ -26,7 +27,7 @@ var logLevels = map[string]logrus.Level{
 }
 
 func init() {
-	lfsHook := newLfsHook("DEBUG", 100000)
+	lfsHook := newLfsHook(logLevel, 100000)
 	Log.AddHook(lfsHook)
 }
 

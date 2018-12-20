@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"github.com/olebedev/config"
@@ -23,6 +24,7 @@ type Config struct {
 	Redis
 	Mysql
 	LogName     string
+	LogLevel    string
 	DESTINATION string
 	Username    string
 	Password    string
@@ -30,8 +32,8 @@ type Config struct {
 
 var V Config
 
-func getConfig() {
-	file, err := ioutil.ReadFile("../config.yml")
+func init() {
+	file, err := ioutil.ReadFile("./config.yml")
 	if err != nil {
 		panic(err)
 	}
@@ -56,6 +58,11 @@ func getConfig() {
 	if err != nil {
 		panic(err)
 	}
+	V.LogLevel, err = cfg.String("logger.logLevel")
+	if err != nil {
+		panic(err)
+	}
+
 	V.DESTINATION, err = cfg.String("DESTINATION")
 	if err != nil {
 		panic(err)
@@ -90,4 +97,6 @@ func getConfig() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(V)
 }

@@ -1,29 +1,31 @@
 development:
   logger:
     logName: 2vid
+    logLevel: "DEBUG"
   DESTINATION: url
   mysql:
-    username: root
-	password:
-	host: 127.0.0.1
-	port: 3306
-	dbname: 2vidTest
+    username: "root"
+    password: ""
+    host: localhost
+    port: 3306
+    dbname: 2vid_test
   redis:
-    url: 127.0.0.1
-	password: 
+    url: localhost:6379
+    password: ""
 
 production:
   logger:
     logName: 2vid
+    logLevel: "DEBUG"
   DESTINATION: url
   mysql:
-    username:
-	password:
-	host:
-	port:
-	dbname:
+    username: 
+    password: 
+    host: 
+    port: 
+    dbname:
   redis:
     url: 
-	password:
-	
+    password: 
+
 environment: development
