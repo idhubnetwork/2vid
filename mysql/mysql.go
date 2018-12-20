@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 
+	"2vid/config"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/idhubnetwork/jsontokens"
 	"gopkg.in/go-playground/validator.v9"
@@ -38,8 +40,13 @@ type Credential struct {
 // mysql init, close in package main
 func init() {
 	var err error
-	DB_mysql, err = sql.Open("mysql",
-		"root:@tcp(127.0.0.1:3306)/2vid_test")
+	username := config.V.Mysql.Username
+	password := config.V.Mysql.Password
+	host := config.V.Mysql.Host
+	port := config.V.Mysql.Port
+	dbname := config.V.Mysql.Dbname
+	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname
+	DB_mysql, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

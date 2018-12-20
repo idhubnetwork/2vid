@@ -14,13 +14,13 @@ import (
 )
 
 // Subscribe listens for messages on Redis pubsub channels.
-func Subscribe(ctx context.Context, redisServerAddr string,
+func Subscribe(ctx context.Context, redisServerAddr string, password string,
 	channels ...string) error {
 	// A ping is set to the server with this period to test for the health of
 	// the connection and server.
 	const healthCheckPeriod = time.Minute
 
-	c, err := redis.Dial("tcp", redisServerAddr,
+	c, err := redis.DialURL(redisServerAddr, redis.DialPassword(password),
 		// Read timeout on server should be greater than ping period.
 		redis.DialReadTimeout(healthCheckPeriod+10*time.Second),
 		redis.DialWriteTimeout(10*time.Second))

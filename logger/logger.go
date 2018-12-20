@@ -3,6 +3,8 @@ package logger
 import (
 	"time"
 
+	"2vid/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
@@ -13,7 +15,7 @@ import (
 var Log = logrus.New()
 
 // log file path and name
-var logName = "2vid"
+var logName = config.V.LogName
 
 var logLevels = map[string]logrus.Level{
 	"DEBUG": logrus.DebugLevel,

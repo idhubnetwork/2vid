@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"2vid/config"
 	"2vid/logger"
 	"errors"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 )
 
 // Unique identify 2vid server in did json token.
-const DESTINATION = "url"
+var DESTINATION = config.V.DESTINATION
 
 // Authentication Error
 type AuthErr struct {
