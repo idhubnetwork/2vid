@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"2vid/config"
+	"2vid/logger"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/idhubnetwork/jsontokens"
@@ -56,16 +57,20 @@ func init() {
 // params args is []string{iss, aud, sub, jwt}, jti is optional
 func GetStatus(args ...string) (jwt_id int, status int, err error) {
 	var row *sql.Row
+	logger.Log.Debug(args)
 	if len(args) == 3 {
-		row = DB_mysql.QueryRow("select jwt_id, status from credentials where iss = ?, sub = ?, aud = ?", args)
+		row = DB_mysql.QueryRow("select jwt_id, status from credentials where iss = ? and sub = ? and aud = ?",
+			args[0], args[1], args[2])
+	} else if len(args) == 4 {
+		row = DB_mysql.QueryRow("select jwt_id, status from credentials where iss = ? and sub = ? and aud = ? and jti = ?",
+			args[0], args[1], args[2], args[3])
 	} else {
-		row = DB_mysql.QueryRow("select jwt_id, status from credentials where iss = ?, sub = ?, aud = ?, jti = ?", args)
+		return 0, 0, errors.New("invalid params to mysql")
 	}
 	err = row.Scan(&jwt_id, &status)
 	if err != nil {
-		log.Fatal(err)
+		return 0, 0, errors.New("Non corresponding credential!")
 	}
-	fmt.Println(status)
 	return
 }
 

@@ -46,7 +46,15 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 	)
 
 	cacheCredential, err := db_redis.GetCacheCredential([]string{jwt_iss, jwt_sub, jwt_aud})
-	if cacheCredential == nil || err != nil {
+	if err != nil {
+		logger.Log.Error(err)
+	}
+
+	logger.Log.Debug(cacheCredential)
+	if cacheCredential.Jwt_id != 0 && cacheCredential.Status != 0 {
+		jwt_id = cacheCredential.Jwt_id
+		status = cacheCredential.Status
+	} else {
 		jwt_jti, ok := jt.Get("jwt_jti").(string)
 		if !ok {
 			jwt_id, status, err = db_mysql.GetStatus(jwt_iss, jwt_sub, jwt_aud)
@@ -62,9 +70,6 @@ func updateCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 			}
 		}
 	}
-
-	jwt_id = cacheCredential.Jwt_id
-	status = cacheCredential.Status
 	logger.Log.Debug(status)
 
 	if IF_CAN_NOT_UPDATE&status == CAN_NOT_UPDATE {
