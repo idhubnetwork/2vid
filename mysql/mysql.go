@@ -200,15 +200,16 @@ func JwtToCredential(jwt string) (*Credential, error) {
 	return credential, nil
 }
 
-func GetKeyById(id int) (credential *Credential, err error) {
+func GetKeyById(id int) (*Credential, error) {
+	credential := new(Credential)
 	row := DB_mysql.QueryRow("select * from credentials where jwt_id = ?",
 		id)
-	err = row.Scan(&id, credential.Iss, credential.Sub, credential.Aud,
-		credential.Exp, credential.Nbf, credential.Iat,
-		credential.Jti, credential.Net, credential.IPFS,
-		credential.Context, credential.Credential, credential.Status)
+	err := row.Scan(&id, &credential.Iss, &credential.Sub, &credential.Aud,
+		&credential.Exp, &credential.Nbf, &credential.Iat,
+		&credential.Jti, &credential.Net, &credential.IPFS,
+		&credential.Context, &credential.Credential, &credential.Status)
 	if err != nil {
 		return nil, err
 	}
-	return
+	return credential, nil
 }

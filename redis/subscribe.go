@@ -92,7 +92,7 @@ func consume(channel string, data []byte) error {
 			return err
 		}
 		cacheCredential := CacheCredential{
-			credential.Status,
+			credential.Status | 0x30,
 			id,
 			credential.Credential,
 		}
