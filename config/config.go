@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 
 	"github.com/olebedev/config"
@@ -97,6 +96,4 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(V)
 }

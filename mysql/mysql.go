@@ -87,10 +87,8 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 
 	err = tmp.Verify()
 	if err != nil {
-		fmt.Println(err)
 		return nil, errors.New("invalid jwt signature")
 	}
-	fmt.Println(tmp)
 
 	if did != tmp.Get("iss").(string) {
 		return nil, errors.New("only jwt issuer have opration permission")
@@ -135,7 +133,6 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 	err = validate.Struct(credential)
 	if err != nil {
 		if _, ok := err.(*validator.InvalidValidationError); ok {
-			fmt.Println(err)
 			return nil, errors.New("validate failed")
 		}
 
@@ -155,7 +152,6 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 		}
 		return nil, errors.New("validate failed")
 	}
-	fmt.Println("validate success\n")
 	return credential, nil
 }
 
