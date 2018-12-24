@@ -1,4 +1,7 @@
 development:
+  did_contract:
+    address: 0x07356Cc7c5641B24e22BCF1DBB77E9D7eaf44F68
+    net: infuraRopsten
   logger:
     logName: 2vid
     logLevel: "DEBUG"
@@ -14,6 +17,9 @@ development:
     password: ""
 
 production:
+  did_contract: 
+    address: 0x07356Cc7c5641B24e22BCF1DBB77E9D7eaf44F68
+    net: infuraRopsten
   logger:
     logName: 2vid
     logLevel: "DEBUG"

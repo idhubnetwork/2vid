@@ -6,6 +6,11 @@ import (
 	"github.com/olebedev/config"
 )
 
+type Contract struct {
+	Net     string
+	Address string
+}
+
 type Redis struct {
 	Url      string
 	Password string
@@ -22,6 +27,7 @@ type Mysql struct {
 type Config struct {
 	Redis
 	Mysql
+	Contract
 	LogName     string
 	LogLevel    string
 	DESTINATION string
@@ -93,6 +99,15 @@ func init() {
 		panic(err)
 	}
 	V.Redis.Password, err = cfg.String("redis.password")
+	if err != nil {
+		panic(err)
+	}
+
+	V.Contract.Net, err = cfg.String("did_contract.net")
+	if err != nil {
+		panic(err)
+	}
+	V.Contract.Address, err = cfg.String("did_contract.address")
 	if err != nil {
 		panic(err)
 	}

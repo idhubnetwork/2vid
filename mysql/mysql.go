@@ -85,7 +85,7 @@ func VerifyWritedData(did string, jwt string) (*Credential, error) {
 		return nil, errors.New("invalid jwt to init")
 	}
 
-	err = tmp.Verify()
+	err = tmp.Verify(config.V.Contract.Net, config.V.Contract.Address)
 	if err != nil {
 		return nil, errors.New("invalid jwt signature")
 	}

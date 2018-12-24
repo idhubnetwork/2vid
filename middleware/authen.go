@@ -46,7 +46,8 @@ func Authentication() gin.HandlerFunc {
 
 		jt := jsontokens.NewJsonToken()
 		jt.SetToken(tmp)
-		if err = jt.Verify(); err != nil {
+		if err = jt.Verify(config.V.Contract.Net,
+			config.V.Contract.Address); err != nil {
 			c.JSON(http.StatusForbidden, AuthErr{err.Error()})
 			c.Abort()
 			return
