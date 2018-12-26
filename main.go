@@ -7,6 +7,7 @@ import (
 	"2vid/mysql"
 	"2vid/redis"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -17,6 +18,10 @@ func main() {
 	defer db_redis.DB_redis.Close()
 
 	router := gin.New()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	router.Use(cors.New(config))
 
 	// Global middleware
 	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
