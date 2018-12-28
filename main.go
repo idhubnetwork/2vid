@@ -20,7 +20,9 @@ func main() {
 	router := gin.New()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*", "http://localhost:8080", "http://127.0.0.1:8080"}
+	config.AllowOrigins = []string{"*"}
+	config.AddAllowHeaders("Origin")
+	config.AllowCredentials = true
 	// config.AllowAllOrigins = true
 	router.Use(cors.New(config))
 
@@ -51,6 +53,8 @@ func main() {
 		*/
 		v1.GET("/", handler.HandleCredential)
 		v1.POST("/", handler.HandleCredential)
+		v1.GET("", handler.HandleCredential)
+		v1.POST("", handler.HandleCredential)
 	}
 
 	router.Run(":8000")
