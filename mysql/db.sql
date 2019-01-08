@@ -28,7 +28,7 @@ CREATE TABLE credentials
 	-- jwt permission status
 	status  int            NOT NULL ,
 	PRIMARY KEY (jwt_id)
-) ENGINE=InnoDB;
+) default charset = utf8, ENGINE=InnoDB;
 
 CREATE TABLE updated_credentials 
 (
@@ -62,4 +62,4 @@ CREATE TABLE updated_credentials
 	-- jwt id foreign key
 	jwt_id  int            NOT NULL,
 	PRIMARY KEY (jwt_tbd_id)
-) ENGINE=InnoDB;
+) default charset = utf8, ENGINE=InnoDB;
