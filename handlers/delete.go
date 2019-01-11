@@ -98,7 +98,12 @@ func deleteCredential(c *gin.Context, jt *jsontokens.JsonToken) {
 			c.JSON(http.StatusForbidden, ActionErr{DELETE_AUDIENCE_ERROR})
 			return
 		}
-		db_mysql.DeleteCredential(jwt_id)
+		err = db_redis.Publish("delete", jwt_id, 0, "")
+		if err != nil {
+			logger.Log.Error(err)
+			c.JSON(http.StatusForbidden, ActionErr{err.Error()})
+			return
+		}
 		c.JSON(http.StatusOK, ActionSuccess{"credential delete successed"})
 		return
 	}
